@@ -14,6 +14,17 @@ import java.util.HashMap;
  */
 public class CambiaCadenas {
     
+    private static boolean flag_out = false;//si se introduce un número por parámetro 0 -> desactiva salida / otro -> activa salida
+    
+    public static boolean isInt(String s){
+        try {
+            int n = Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    
     public static HashMap<String, HashMap<String, String>> generaM(){
         HashMap<String, HashMap<String, String>> out = new HashMap<>();
         
@@ -68,7 +79,7 @@ public class CambiaCadenas {
     
     public static ArrayList<String> CambiaCadenas(String s, HashMap<String, HashMap<String, String>> M){
         ArrayList<String> out = new ArrayList<>();
-        String head = "", head1, head2, c, tail, cadena = s;
+        String head = "", head1, head2, c, tail, cadena = s, aux;
         
         if (s.length() < 2){ //No hay cadena que analizar
             out.add(s);
@@ -80,7 +91,9 @@ public class CambiaCadenas {
                 c = M.get(head1).get(head2);
                 tail = cadena.substring(2);
                 
-                out = addNotContains(out, CambiaCadenas(head.concat(c.concat(tail)), M));
+                aux = head.concat(c.concat(tail));
+                if (flag_out) System.out.println(s + "->" + aux);//para comprobar que funciona
+                out = addNotContains(out, CambiaCadenas(aux, M));
                 
                 head = head.concat(head1);//retiramos la primera en cada iteración
                 cadena = cadena.substring(1);
@@ -97,8 +110,24 @@ public class CambiaCadenas {
         HashMap<String, HashMap<String, String>> M = generaM();
         System.out.println("La matriz M está inicializada como:");
         imprimeMatriz(M);
+        String cadena = "";
         
-        ArrayList<String> salida = CambiaCadenas("acabada", M);
+        if (args.length > 0){//para la entrada de parámetros
+            for (int i = 0; i < args.length; i++){
+                if (isInt(args[i])){//para activar o desactivar la salida del seguimiento del CambiaCadenas
+                    flag_out = Integer.parseInt(args[i]) != 0;
+                } else {
+                    cadena = args[i];//si es letra, se sustituye la cadena
+                }
+            }
+            
+            cadena = args[0];
+        }
+        
+        if (cadena.isEmpty()) cadena = "acabada";
+        
+        System.out.println("Entrada: " + cadena);
+        ArrayList<String> salida = CambiaCadenas(cadena, M);
         System.out.println(salida.toString());
     }
     
