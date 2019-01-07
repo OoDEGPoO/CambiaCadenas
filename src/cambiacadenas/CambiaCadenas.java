@@ -66,21 +66,25 @@ public class CambiaCadenas {
         return out;
     }
     
-    public static ArrayList<String> CambiaCadenas(String s, HashMap<String, HashMap<String, String>> M, String head){
+    public static ArrayList<String> CambiaCadenas(String s, HashMap<String, HashMap<String, String>> M){
         ArrayList<String> out = new ArrayList<>();
-        String head1, head2, tail = "", c;
+        String head = "", head1, head2, c, tail, cadena = s;
         
         if (s.length() < 2){ //No hay cadena que analizar
             out.add(s);
             return out;
         } else {
-            head1 = s.substring(0+head.length(), 1+head.length());
-            head2 = s.substring(1+head.length(), 2+head.length());
-            c = M.get(head1).get(head2);
-            if (s.length() == 2) tail = s.substring(2);
-            
-            out = CambiaCadenas(c.concat(tail), M, head);
-            out = addNotContains(out, (CambiaCadenas()));//--------- Replantear
+            do {
+                head1 = cadena.substring(0, 1);
+                head2 = cadena.substring(1, 2);
+                c = M.get(head1).get(head2);
+                tail = cadena.substring(2);
+                
+                out = addNotContains(out, CambiaCadenas(head.concat(c.concat(tail)), M));
+                
+                head = head.concat(head1);//retiramos la primera en cada iteración
+                cadena = cadena.substring(1);
+            } while(tail.length() > 0);
         }
         
         return out;
@@ -94,7 +98,7 @@ public class CambiaCadenas {
         System.out.println("La matriz M está inicializada como:");
         imprimeMatriz(M);
         
-        ArrayList<String> salida = CambiaCadenas("acabada", M, new String(""));
+        ArrayList<String> salida = CambiaCadenas("acabada", M);
         System.out.println(salida.toString());
     }
     
